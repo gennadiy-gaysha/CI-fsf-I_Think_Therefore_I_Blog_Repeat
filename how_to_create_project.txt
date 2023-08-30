@@ -144,12 +144,14 @@ variables using the server's configuration or a service like Heroku's config var
 Settings > Config Vars:
 DATABASE_URL - (take the value from .env file)
 SECRET_KEY - (take the value from .env file)
-DISABLE_COLLECTSTATIC - 1
+DISABLE_COLLECTSTATIC - 1 (temporary step for the moment, will be removed
+before deployment)
+PORT - 8000
 
 3. Procfile: Create a file named Procfile (without any file extension) in your
 project's root directory. The Procfile tells Heroku how to run your application.
-Inside the Procfile, add the following line:
-web: gunicorn django_todo.wsgi:application
+Inside the Procfile, add the following line (inserting project name):
+web: gunicorn codestar2023.wsgi:application
 
 4. Add to ALLOWED_HOSTS of settings.py:
 "127.0.0.1", "django-codestar-app-gaysha-rep-32a35f22826b.herokuapp.com", where
@@ -164,7 +166,7 @@ heroku login -i
 - use API key from Account settings (in case of Multi-Factor Authentication) as
 a password
 
-- heroku logs --app=django-todo-app-gaysha-repeat
+- heroku logs --app=django-codestar-app-gaysha-rep
 
 6. In local terminal:
 git add . > git commit -m 'message' > git push
@@ -175,57 +177,37 @@ Deploy > Github > repo-name > Search > Connect > Deploy Branch
 On this step you can check your deployed app on Heroku.
 
 7. Get our static and media files stored on Cloudinary.
-
-
-
-
-
-
-
-
-
-
-
-
 ===============================================================================
-DEPLOYMENT TO HEROKU.
-With a new database created and the settings.py file set up to connect to it,
-we will need to connect our new database to Heroku.
+8. Cloudinary Setup
+Visit the Cloudinary website: https://cloudinary.com/
+Click on the Sign Up For Free button
+Provide your name, email address and choose a password
+For Primary interest, you can choose Programmable Media for image and video API
+Optional: edit your assigned cloud name to something more memorable
+Click Create Account
+Verify your email and you will be brought to the dashboard
 
-1. Add two config vars:
-DATABASE_URL (from .env file, i. e. with inserted port number), and for the
-value, copy in your database URL from ElephantSQL (see above line), no need to
-add quotation marks.
-SECRET_KEY containing your secret key
+- From Cloudinary Dashboard:
+Copy your CLOUDINARY_URL e.g. API Environment Variable
 
-2. When deploying a Django project to Heroku, you will typically need to use a
-web server to serve your application. Gunicorn (short for "Green Unicorn") is a
-commonly used web server that is recommended for deploying Django applications
-on Heroku.
-Heroku's platform expects the application to be run using a web server that can
-handle incoming HTTP requests. Gunicorn is one of the most popular choices
-because it is a production-ready WSGI server (Web Server Gateway Interface)
-that can handle serving Django applications efficiently and securely.
+- Add Cloudinary URL to .env:
+CLOUDINARY_URL=...
 
-Install Gunicorn: Add Gunicorn to your project's requirements.txt file and
-install it using pip
+- In Heroku add to Settings tab in Config Vars e.g. CLOUDINARY_URL
 
-3. Procfile: Create a file named Procfile (without any file extension) in your
-project's root directory. The Procfile tells Heroku how to run your application.
-Inside the Procfile, add the following line:
-web: gunicorn django_todo.wsgi:application
+- settings.py - Add Cloudinary Libraries to installed apps:
+INSTALLED_APPS = [
+    …,
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
+    …,
+]
+(note: order is important)
 
-4. Add to ALLOWED_HOSTS of settings.py:
-"127.0.0.1", "django-todo-app-gaysha-repeat-8ee4d1028769.herokuapp.com", where
-the second item is generated from Heroku > settings > Domains of the current
-project
+- Tell Django to use Cloudinary to store media and static files
+Place under the Static files Note
 
-5. In case of any errors:
 
-- login to heroku terminal using command:
-heroku login -i
 
-- use API key from Account settings (in case of Multi-Factor Authentication) as
-a password
 
-- heroku logs --app=django-todo-app-gaysha-repeat
