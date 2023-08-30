@@ -29,6 +29,16 @@ CI-fsf-Hello_Django-Repeat\venv
 
 5. While your virtual environment is active, install Django and gunicorn using
 pip. You don't need to install Django globally on your system:
+
+When deploying a Django project to Heroku, you will typically need to use a
+web server to serve your application. Gunicorn (short for "Green Unicorn") is a
+commonly used web server that is recommended for deploying Django applications
+on Heroku.
+Heroku's platform expects the application to be run using a web server that can
+handle incoming HTTP requests. Gunicorn is one of the most popular choices
+because it is a production-ready WSGI server (Web Server Gateway Interface)
+that can handle serving Django applications efficiently and securely.
+
 pip install 'django<4' gunicorn
 
 6. Install supporting libraries (we use psycopg2 to connect to PostgreSQL):
@@ -80,8 +90,7 @@ running this command in terminal: python manage.py runserver
 venv/
 db.sqlite3
 ===============================================================================
-Step 2: Deploying an app to Heroku
-5 stages:
+Step 2: Deploying an app to Heroku.
 
 1. Create a new external database (elephantsql.com)
 ===============================================================================
@@ -137,11 +146,35 @@ DATABASE_URL - (take the value from .env file)
 SECRET_KEY - (take the value from .env file)
 DISABLE_COLLECTSTATIC - 1
 
-3. git add . > git commit -m 'message' > git push
+3. Procfile: Create a file named Procfile (without any file extension) in your
+project's root directory. The Procfile tells Heroku how to run your application.
+Inside the Procfile, add the following line:
+web: gunicorn django_todo.wsgi:application
 
-Deploy > Github > repo-name > Search
+4. Add to ALLOWED_HOSTS of settings.py:
+"127.0.0.1", "django-codestar-app-gaysha-rep-32a35f22826b.herokuapp.com", where
+the second item is generated from Heroku > settings > Domains of the current
+project
 
-3. Get our static and media files stored on Cloudinary.
+5. In case of any errors:
+
+- login to heroku terminal using command:
+heroku login -i
+
+- use API key from Account settings (in case of Multi-Factor Authentication) as
+a password
+
+- heroku logs --app=django-todo-app-gaysha-repeat
+
+6. In local terminal:
+git add . > git commit -m 'message' > git push
+
+In Heroku app:
+Deploy > Github > repo-name > Search > Connect > Deploy Branch
+
+On this step you can check your deployed app on Heroku.
+
+7. Get our static and media files stored on Cloudinary.
 
 
 
