@@ -1,0 +1,159 @@
+1. Create project directory and move to it in PyCharm. Delete default main.py
+file after opening in PyCharm.
+
+2. Before creating a Django project, it's a good practice to create a virtual
+environment for it. This isolates your project's dependencies from the system-wide
+Python installation.
+python -m venv venv_name
+
+3. Activate the virtual environment (on Windows):
+venv_name\Scripts\activate
+
+4. In PyCharm > File > Settings > Project_name > Python Interpreter > Add
+Interpreter > C:\Users\Геннадий Гайша\Google Диск\Code_Institute\CI_Modules\
+CI-fsf-Hello_Django-Repeat\venv
+
+5. Run current file (dropdown menu) > Edit Configuration > Script Path:
+path to project's <manage.py> file/Parameters: runserver/Python interpreter -
+from p. 4 (Name > add your_app_name)
+
+6. While your virtual environment is active, install Django using pip. You
+don't need to install Django globally on your system. pip install django (or
+'django<4')
+
+7. Once you're in the desired directory, you can create your Django project
+using the django-admin startproject command followed by the project name. For
+example, if you want to name your project movie_proj, you can run:
+django-admin startproject movie_proj .
+!!! The . at the end indicates that the project should be created in the current
+directory. This will create a movie_proj directory with the initial project files.
+
+8. If you need additional packages for your project, you can install them
+while your
+virtual environment is active.
+pip install package_name_1 package_name_2 package_name_3 package_name_4
+
+===============================================================================
+To hide sensitive data, such as the Django secret key, in a Django project using
+the dotenv library, you can follow these steps:
+
+- Install python-dotenv dj_database_url and psycopg2:
+pip install python-dotenv
+pip install dj_database_url==0.5.0 psycopg2 (we use psycopg2 to connect to
+PostgreSQL)
+
+- Create third party database (elephantsql.com)
+
+- Create a .env File: Create a file named .env in the root directory of your
+Django project. This is where you'll store your sensitive data.
+
+- Place your SECRET_KEY (from settings.py) and DATABASE_URL value (URL from
+your remote third party database - elephantsql.com) in it:
+SECRET_KEY=mysecretkeyhere
+DATABASE_URL=myelephantsqlurl (!!! in DATABASE_URL in .env file insert port
+number after <...elephantsql.com:5432/...)
+
+- Access Environment Variables in Settings: Open your Django project's settings.py
+file and import the dotenv library:
+import dotenv
+dotenv.load_dotenv()
+import dj_database_url (for remote database)
+
+- Load Environment Variables: At the top of your settings.py file, load the
+environment variables from the .env file:
+import dotenv
+dotenv.load_dotenv()
+import dj_database_url
+
+- Access Environment Variables: Use the os.environ dictionary to access the
+environment variables from the .env file. For example, to access the secret key:
+SECRET_KEY = os.environ.get('SECRET_KEY')
+to access remote database (!replace the local database with a remote database):
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+}
+- Replace 'SECRET_KEY' with the actual name of the environment variable you
+defined in your .env file (if needed)
+- Git Ignore .env: It's crucial to add .env to your .gitignore file so that you
+don't accidentally commit sensitive data to version control.
+also add venv directory and local db to .gitignore:
+.env
+venv/
+db.sqlite3
+-Use .env in Production: In production environments, you can manually set environment
+variables using the server's configuration or a service like Heroku's config vars.
+===============================================================================
+
+9. After installing all packages create requirements.txt file
+pip freeze > requirements.txt
+
+10. Create your app:
+python manage.py startapp movie_app
+
+11. Add newly created app to the end of INSTALLED_APPS variable in settings
+.py file:
+INSTALLED_APPS = [
+...,
+'todo'
+]
+
+12. To ensure that the database schema is up-to-date and ready to
+accommodate any models you define in the future:
+python manage.py migrate
+
+13. While the virtual environment is active, you can work on your Django
+project, run
+migrations, start the development server, etc.
+
+14. When you're done working on your project, deactivate the virtual
+environment.
+deactivate
+!!! PyCharm provides an option to automatically activate the virtual environment
+associated with a project whenever you open a terminal within the IDE.
+File>Settings>Tools>Terminal>Activate virtualenv (check/uncheck)
+
+15. Whenever you want to continue working on your project, activate the virtual
+environment first.
+venv_name\Scripts\activate
+===============================================================================
+DEPLOYMENT TO HEROKU.
+With a new database created and the settings.py file set up to connect to it,
+we will need to connect our new database to Heroku.
+
+1. Add two config vars:
+DATABASE_URL (from .env file, i. e. with inserted port number), and for the
+value, copy in your database URL from ElephantSQL (see above line), no need to
+add quotation marks.
+SECRET_KEY containing your secret key
+
+2. When deploying a Django project to Heroku, you will typically need to use a
+web server to serve your application. Gunicorn (short for "Green Unicorn") is a
+commonly used web server that is recommended for deploying Django applications
+on Heroku.
+Heroku's platform expects the application to be run using a web server that can
+handle incoming HTTP requests. Gunicorn is one of the most popular choices
+because it is a production-ready WSGI server (Web Server Gateway Interface)
+that can handle serving Django applications efficiently and securely.
+
+Install Gunicorn: Add Gunicorn to your project's requirements.txt file and
+install it using pip
+
+3. Procfile: Create a file named Procfile (without any file extension) in your
+project's root directory. The Procfile tells Heroku how to run your application.
+Inside the Procfile, add the following line:
+web: gunicorn django_todo.wsgi:application
+
+4. Add to ALLOWED_HOSTS of settings.py:
+"127.0.0.1", "django-todo-app-gaysha-repeat-8ee4d1028769.herokuapp.com", where
+the second item is generated from Heroku > settings > Domains of the current
+project
+
+5. In case of any errors:
+
+- login to heroku terminal using command:
+heroku login -i
+
+- use API key from Account settings (in case of Multi-Factor Authentication) as
+a password
+
+- heroku logs --app=django-todo-app-gaysha-repeat
