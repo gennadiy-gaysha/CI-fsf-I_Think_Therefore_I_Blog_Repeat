@@ -207,7 +207,9 @@ INSTALLED_APPS = [
 
 - Tell Django to use Cloudinary to store media and static files
 Place under the Static files Note
-
+.......
+https://www.youtube.com/watch?v=Qhypx3Z2Heg&t=1s
+https://docs.google.com/document/d/1bRNpiUz-89RV0EPzuvbvXyGcSErbR3eRcjfMSNHUaBg/edit?usp=sharing
 
 
 
