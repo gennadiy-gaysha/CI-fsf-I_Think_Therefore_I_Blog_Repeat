@@ -13,7 +13,7 @@ from cloudinary.models import CloudinaryField
 # state of the instances. For example, if you have a BlogPost model, you might have a
 # field like status = models.IntegerField(choices=STATUS, default=0) to represent the
 # status of each blog post.
-STATUS = ((0, "Draft"), (1, "Published"))
+STATUS = ((0, "Черновик"), (1, "Опубликовано"))
 
 
 class Post(models.Model):
@@ -27,7 +27,7 @@ class Post(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
     content = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    status = models.IntegerField(choices=STATUS, default=0)
+    status = models.IntegerField(default=0, choices=STATUS)
     likes = models.ManyToManyField(
         User, related_name='blogpost_like', blank=True)
 
@@ -39,3 +39,18 @@ class Post(models.Model):
 
     def number_of_likes(self):
         return self.likes.count()
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    name = models.CharField(max_length=80)
+    email = models.EmailField()
+    body = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    approved = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created_on']
+
+    def __str__(self):
+        return f'Comment {self.body} by {self.name}'
